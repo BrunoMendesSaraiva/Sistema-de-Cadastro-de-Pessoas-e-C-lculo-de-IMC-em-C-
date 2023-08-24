@@ -85,7 +85,6 @@ void cadastrarPessoa(std::vector<Pessoa>& pessoas, std::set<std::string>& nomesU
 
         nomesUtilizados.insert(pessoa.nome);
 
-
         //IDADE
         std::cout << "Digite a idade: ";
         std::cin >> pessoa.idade;
@@ -199,6 +198,42 @@ int sair() {
     return 0;
 }
 
+int obterOpcao() {
+    int opcao;
+    std::string entrada;
+
+    while (true) {
+        std::cout << "Menu:" << std::endl;
+        std::cout << "1. Cadastrar pessoa" << std::endl;
+        std::cout << "2. Listar pessoas cadastradas" << std::endl;
+        std::cout << "3. Pesquisar pessoa por nome" << std::endl;
+        std::cout << "4. Sair" << std::endl;
+        std::cout << "Escolha uma opção: ";
+
+        std::cin >> entrada;
+
+        try {
+            opcao = std::stoi(entrada);
+
+            if (opcao >= 1 && opcao <= 4) {
+                break; // Sai do loop se a opção for válida
+            }
+            else {
+                std::cout << "Opção inválida. Insira um número entre 1 e 4." << std::endl;
+                opcao = sair();
+            }
+        }
+        catch (const std::exception& e) {
+            std::cout << "Erro: Insira um número válido." << std::endl;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            opcao = sair();
+        }
+    }
+
+    return opcao;
+}
+
 int main() {
     setlocale(LC_ALL, "Portuguese");
     std::vector<Pessoa> pessoas;
@@ -207,6 +242,8 @@ int main() {
     std::set<std::string> nomesUtilizados;
 
     do {
+        opcao = obterOpcao();
+
         switch(opcao) {
         case 0:
             std::cout << "\nMenu:\n";
@@ -215,20 +252,17 @@ int main() {
             std::cout << "3. Pesquisar pessoa por nome\n";
             std::cout << "4. Sair\n";
             std::cout << "Escolha uma opção: ";
-            std::cin >> opcao;
+            opcao = obterOpcao();
             break;
         case 1:
             cadastrarPessoa(pessoas, nomesUtilizados);
             opcao = sair();
-            system("cls");
             break;
-            
         case 2:
             system("cls");
             listarPessoas(pessoas);
-            opcao = sair();
+            sair();
             break;
-         
         case 3: {
             system("cls");
             std::cin.ignore();
@@ -236,20 +270,18 @@ int main() {
             std::cout << "Digite o nome da pessoa a pesquisar: ";
             std::getline(std::cin, nome);
             pesquisarPorNome(pessoas, nome);
-            opcao = sair();
+            sair();
             break;
         }
         case 4:
             std::cout << "Encerrando o programa.\n";
             break;
-
         default:
             std::cout << "Opção inválida.\n";
-            opcao = sair();
+            sair();
         }
     } while (opcao != 4);
-    system("cls");
-    std::cout << "O programa foi encerrado!";
 
+    std::cout << "O programa foi encerrado!";
     return 0;
 }
