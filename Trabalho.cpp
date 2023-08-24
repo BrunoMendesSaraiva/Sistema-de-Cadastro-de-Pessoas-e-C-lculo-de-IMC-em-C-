@@ -34,16 +34,16 @@ bool contemApenasLetras(const std::string& str) {
 // Função para exibir observações sobre o IMC
 void exibirObservacoesIMC(float imc) {
     if (imc < 18.5) {
-        std::cout << "Obs: Você está abaixo do peso\n";
+        std::cout << "\nObs: Você está abaixo do peso\n";
     }
     else if (imc < 24) {
-        std::cout << "Obs: Você está com peso normal\n";
+        std::cout << "\nObs: Você está com peso normal\n";
     }
     else if (imc < 29) {
-        std::cout << "Obs: Você está acima do peso\n";
+        std::cout << "\nObs: Você está acima do peso\n";
     }
     else {
-        std::cout << "Obs: Infelizmente, você está obeso\n";
+        std::cout << "\nObs: Infelizmente, você está obeso\n";
     }
 }
 
@@ -63,6 +63,7 @@ void cadastrarPessoa(std::vector<Pessoa>& pessoas, std::set<std::string>& nomesU
     Pessoa pessoa;
 
     try {
+        // Solicitar nome da pessoa
         std::cout << "Digite o nome: ";
         std::cin.ignore();
         std::getline(std::cin, pessoa.nome);
@@ -83,63 +84,77 @@ void cadastrarPessoa(std::vector<Pessoa>& pessoas, std::set<std::string>& nomesU
             throw std::invalid_argument("Nome inválido. A primeira letra deve ser maiúscula.");
         }
 
-        nomesUtilizados.insert(pessoa.nome);
-
         //IDADE
-        std::cout << "Digite a idade: ";
-        std::cin >> pessoa.idade;
-        if (pessoa.idade <= 0 || pessoa.idade > 150) {
-            throw std::invalid_argument("Idade inválida. A idade deve ser positiva e razoável.");
+        while (true) {
+            std::cout << "Digite a idade: ";
+            std::cin >> pessoa.idade;
+            if (pessoa.idade <= 0 || pessoa.idade > 150) {
+                std::cout << "Idade inválida. A idade deve ser positiva e razoável." << std::endl;
+            }
+            else {
+                break;
+            }
         }
 
         //PESO
-        std::cout << "Digite o peso (em kg): ";
-        std::string pesoStr;
-        std::cin >> pesoStr;
+        while (true) {
+            std::cout << "Digite o peso (em kg): ";
+            std::string pesoStr;
+            std::cin >> pesoStr;
 
-        if (pesoStr.find_first_of(",.") != std::string::npos) {
-            std::cout << "Peso inválido. Use apenas números inteiros, sem vírgula ou ponto.";
-            return; // Retorna sem cadastrar a pessoa
-        }
-
-        try {
-            pessoa.peso = converterParaFloat(pesoStr);
-            if (pessoa.peso <= 0 || pessoa.peso > 500) {
-                throw std::invalid_argument("Peso inválido. O peso deve ser positivo e razoável.");
+            if (pesoStr.find_first_of(",.") != std::string::npos) {
+                std::cout << "Peso inválido. Use apenas números inteiros, sem vírgula ou ponto." << std::endl;
+            }
+            else {
+                try {
+                    pessoa.peso = converterParaFloat(pesoStr);
+                    if (pessoa.peso <= 0 || pessoa.peso > 500) {
+                        std::cout << "Peso inválido. O peso deve ser positivo e razoável." << std::endl;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                catch (const std::exception& e) {
+                    std::cout << "Peso inválido. Insira um valor numérico." << std::endl;
+                }
             }
         }
-        catch (const std::exception& e) {
-            throw std::invalid_argument("Peso inválido. Insira um valor numérico.");
-        }
-
         //ALTURA
-        std::cout << "Digite a altura (em centímetros): ";
-        std::string alturaStr;
-        std::cin >> alturaStr;
+        while (true) {
+            std::cout << "Digite a altura (em centímetros): ";
+            std::string alturaStr;
+            std::cin >> alturaStr;
 
-        if (alturaStr.find_first_of(",.") != std::string::npos) {
-            std::cout << "Altura inválida. Use apenas números inteiros, sem vírgula ou ponto.";
-            return; // Retorna sem cadastrar a pessoa
-        }
-
-        try {
-            pessoa.altura = converterParaFloat(alturaStr) / 100.0; // Convertendo para metros
-            if (pessoa.altura <= 0 || pessoa.altura > 3) {
-                throw std::invalid_argument("Altura inválida. A altura deve ser positiva e razoável.");
+            if (alturaStr.find_first_of(",.") != std::string::npos) {
+                std::cout << "Altura inválida. Use apenas números inteiros, sem vírgula ou ponto." << std::endl;
             }
-        }
-        catch (const std::exception& e) {
-            throw std::invalid_argument("Altura inválida. Insira um valor numérico.");
+            else {
+                try {
+                    pessoa.altura = converterParaFloat(alturaStr) / 100.0; // Convertendo para metros
+                    if (pessoa.altura <= 0 || pessoa.altura > 3) {
+                        std::cout << "Altura inválida. A altura deve ser positiva e razoável." << std::endl;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                catch (const std::exception& e) {
+                    std::cout << "Altura inválida. Insira um valor numérico." << std::endl;
+                }
+            }
         }
 
         pessoa.imc = calcularIMC(pessoa.peso, pessoa.altura);
 
         pessoas.push_back(pessoa);
+        nomesUtilizados.insert(pessoa.nome);// Adicionar o nome ao conjunto
 
+        // Exibir informações sobre o cadastro bem-sucedido
         float imc = calcularIMC(pessoa.peso, pessoa.altura);
-        std::cout << "IMC calculado: " << imc << std::endl;
-        exibirObservacoesIMC(imc); // Chama a função para exibir observações do IMC
-        std::cout << "Pessoa cadastrada com sucesso!\n";
+        std::cout << "\nIMC calculado: \n" << imc << std::endl;
+        exibirObservacoesIMC(imc);
+        std::cout << "\nPessoa cadastrada com sucesso!\n";
     }
     catch (const std::exception& e) {
         std::cout << "Erro ao cadastrar pessoa: " << e.what() << std::endl;
@@ -188,6 +203,85 @@ void pesquisarPorNome(const std::vector<Pessoa>& pessoas, const std::string& nom
     if (!encontrada) {
         std::cout << "\nPessoa não encontrada.\n";
     }
+}
+
+// Função para atualizar informações de uma pessoa
+void atualizarPessoa(Pessoa& pessoa) {
+    std::cout << "Digite a nova idade: ";
+    std::cin >> pessoa.idade;
+    if (pessoa.idade <= 0 || pessoa.idade > 150) {
+        throw std::invalid_argument("Idade inválida. A idade deve ser positiva e razoável.");
+    }
+
+    std::cout << "Digite o novo peso (em kg): ";
+    std::string pesoStr;
+    std::cin >> pesoStr;
+    try {
+        pessoa.peso = converterParaFloat(pesoStr);
+        if (pesoStr.find_first_of(",.") != std::string::npos) {
+            std::cout << "Peso inválido. Use apenas números inteiros, sem vírgula ou ponto.";
+            return; // Retorna sem cadastrar a pessoa
+        }
+        if (pessoa.peso <= 0 || pessoa.peso > 500) {
+            throw std::invalid_argument("Peso inválido. O peso deve ser positivo e razoável.");
+        }
+    }
+    catch (const std::exception& e) {
+        throw std::invalid_argument("Peso inválido. Insira um valor numérico.");
+    }
+
+    std::cout << "Digite a nova altura (em centímetros): ";
+    std::string alturaStr;
+    std::cin >> alturaStr;
+
+    if (alturaStr.find_first_of(",.") != std::string::npos) {
+        std::cout << "Altura inválida. Use apenas números inteiros, sem vírgula ou ponto.";
+        return; // Retorna sem cadastrar a pessoa
+    }
+
+    try {
+        pessoa.altura = converterParaFloat(alturaStr) / 100.0; // Convertendo para metros
+        if (pessoa.altura <= 0 || pessoa.altura > 3) {
+            throw std::invalid_argument("Altura inválida. A altura deve ser positiva e razoável.");
+        }
+    }
+    catch (const std::exception& e) {
+        throw std::invalid_argument("Altura inválida. Insira um valor numérico.");
+    }
+
+    pessoa.imc = calcularIMC(pessoa.peso, pessoa.altura);
+
+    std::cout << "Informações atualizadas com sucesso!\n";
+}
+
+// Função para pesquisar pessoa por nome e mostrar/editar seus dados
+void pesquisarPorNome(std::vector<Pessoa>& pessoas, std::set<std::string>& nomesUtilizados, const std::string& nome) {
+    for (Pessoa& pessoa : pessoas) {
+        if (pessoa.nome == nome) {
+            float imc = calcularIMC(pessoa.peso, pessoa.altura);
+
+            std::cout << "\nPessoa encontrada:\n";
+            std::cout << "Nome: " << pessoa.nome << std::endl;
+            std::cout << "Idade: " << pessoa.idade << std::endl;
+            std::cout << "Peso: " << pessoa.peso << " kg" << std::endl;
+            std::cout << "Altura: " << pessoa.altura << " m" << std::endl;
+            std::cout << "IMC: " << pessoa.imc << std::endl;
+            exibirObservacoesIMC(imc);
+            std::cout << "-------------------" << std::endl;
+
+            // Oferecer a opção de edição
+            std::cout << "Deseja editar as informações desta pessoa? (S/N): ";
+            char resposta;
+            std::cin >> resposta;
+            if (resposta == 'S' || resposta == 's') {
+                atualizarPessoa(pessoa);
+            }
+
+            return;
+        }
+    }
+
+    std::cout << "\nPessoa não encontrada.\n";
 }
 
 // Função para limpar o console
@@ -244,19 +338,10 @@ int main() {
     do {
         opcao = obterOpcao();
 
-        switch(opcao) {
-        case 0:
-            std::cout << "\nMenu:\n";
-            std::cout << "1. Cadastrar pessoa\n";
-            std::cout << "2. Listar pessoas cadastradas\n";
-            std::cout << "3. Pesquisar pessoa por nome\n";
-            std::cout << "4. Sair\n";
-            std::cout << "Escolha uma opção: ";
-            opcao = obterOpcao();
-            break;
+        switch (opcao) {
         case 1:
             cadastrarPessoa(pessoas, nomesUtilizados);
-            opcao = sair();
+            sair();
             break;
         case 2:
             system("cls");
@@ -269,7 +354,7 @@ int main() {
             std::string nome;
             std::cout << "Digite o nome da pessoa a pesquisar: ";
             std::getline(std::cin, nome);
-            pesquisarPorNome(pessoas, nome);
+            pesquisarPorNome(pessoas, nomesUtilizados, nome);
             sair();
             break;
         }
@@ -281,7 +366,7 @@ int main() {
             sair();
         }
     } while (opcao != 4);
-
+    system("cls");
     std::cout << "O programa foi encerrado!";
     return 0;
 }
