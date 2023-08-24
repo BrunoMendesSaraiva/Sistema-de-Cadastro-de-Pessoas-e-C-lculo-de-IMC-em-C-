@@ -28,7 +28,6 @@ bool contemApenasLetras(const std::string& str) {
     return true;
 }
 
-
 // Função para cadastrar uma pessoa e armazená-la internamente
 void cadastrarPessoa(std::vector<Pessoa>& pessoas) {
     Pessoa pessoa;
